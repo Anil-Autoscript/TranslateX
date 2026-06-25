@@ -1,0 +1,51 @@
+name: TranslateX AI Backend
+
+on:
+  workflow_dispatch:
+    inputs:
+      text:
+        description: "Text to translate"
+        required: true
+      source:
+        description: "Source language code (e.g. en)"
+        required: true
+      target:
+        description: "Target language code (e.g. hi)"
+        required: true
+      request_id:
+        description: "Unique request ID from the app"
+        required: true
+        default: "req_default"
+
+jobs:
+  translate:
+    name: "Translate [${{ github.event.inputs.request_id }}]"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests deep-translator
+
+      - name: Run translation script
+        env:
+          INPUT_TEXT:   ${{ github.event.inputs.text }}
+          SOURCE_LANG:  ${{ github.event.inputs.source }}
+          TARGET_LANG:  ${{ github.event.inputs.target }}
+          REQUEST_ID:   ${{ github.event.inputs.request_id }}
+        run: python backend/translate.py
+
+      - name: Upload translation result as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-result-${{ github.event.inputs.request_id }}
+          path: result.json
+          retention-days: 1
