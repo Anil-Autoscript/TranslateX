@@ -1,5 +1,9 @@
 name: TranslateX AI Backend
 
+# Sets the workflow run's display name to include requestId so the
+# Android app can identify it when polling the runs list.
+run-name: "Translate [${{ github.event.inputs.request_id }}]"
+
 on:
   workflow_dispatch:
     inputs:
@@ -13,13 +17,13 @@ on:
         description: "Target language code (e.g. hi)"
         required: true
       request_id:
-        description: "Unique request ID from the app"
+        description: "Unique request ID from the Android app"
         required: true
         default: "req_default"
 
 jobs:
   translate:
-    name: "Translate [${{ github.event.inputs.request_id }}]"
+    name: "translate"
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -27,25 +31,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dependencies
-        run: pip install requests deep-translator
+      - name: Install Python dependencies
+        run: pip install --quiet deep-translator
 
       - name: Run translation script
         env:
-          INPUT_TEXT:   ${{ github.event.inputs.text }}
-          SOURCE_LANG:  ${{ github.event.inputs.source }}
-          TARGET_LANG:  ${{ github.event.inputs.target }}
-          REQUEST_ID:   ${{ github.event.inputs.request_id }}
+          INPUT_TEXT:  ${{ github.event.inputs.text }}
+          SOURCE_LANG: ${{ github.event.inputs.source }}
+          TARGET_LANG: ${{ github.event.inputs.target }}
+          REQUEST_ID:  ${{ github.event.inputs.request_id }}
         run: python backend/translate.py
 
-      - name: Upload translation result as artifact
+      # Always upload — even on script failure — so the app gets an
+      # error payload rather than timing out waiting for an artifact.
+      - name: Upload result artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: translation-result-${{ github.event.inputs.request_id }}
           path: result.json
           retention-days: 1
+          if-no-files-found: warn
