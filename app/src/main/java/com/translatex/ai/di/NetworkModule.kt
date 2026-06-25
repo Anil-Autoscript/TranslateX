@@ -20,22 +20,31 @@ object NetworkModule {
 
     private const val GITHUB_BASE_URL = "https://api.github.com/"
 
-    /** Attach the PAT to every request as a Bearer token. */
+    /** Attaches PAT + required GitHub API headers to every request. */
     private fun authInterceptor() = Interceptor { chain ->
-        val request = chain.request().newBuilder()
+        val req = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer ${BuildConfig.GITHUB_TOKEN}")
             .addHeader("Accept", "application/vnd.github+json")
             .addHeader("X-GitHub-Api-Version", "2022-11-28")
             .build()
-        chain.proceed(request)
+        chain.proceed(req)
     }
 
+    /**
+     * Single OkHttpClient shared by both Retrofit and the manual
+     * artifact-download call in [TranslationRepository].
+     *
+     * followRedirects = true  ← GitHub artifact URLs return a 302 to S3;
+     * OkHttp follows it automatically but strips the Authorization header
+     * on cross-host redirects.  We keep it true and handle auth in the
+     * repository's manual request builder.
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG)
-                HttpLoggingInterceptor.Level.BODY
+                HttpLoggingInterceptor.Level.BASIC
             else
                 HttpLoggingInterceptor.Level.NONE
         }
@@ -43,8 +52,10 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor())
             .addInterceptor(logging)
+            .followRedirects(true)
+            .followSslRedirects(true)
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)   // artifact download can be slow
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
