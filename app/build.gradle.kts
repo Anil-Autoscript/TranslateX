@@ -19,11 +19,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // GitHub config — replace with your values before building
-        buildConfigField("String", "GITHUB_OWNER", "\"Anil-Autoscript\"")
-        buildConfigField("String", "GITHUB_REPO", "\"TranslateX\"")
-        buildConfigField("String", "GITHUB_TOKEN", "\"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\"")
-        buildConfigField("String", "WORKFLOW_FILE", "\"translate.yml\"")
+        buildConfigField("String", "GITHUB_OWNER", "\"${System.getenv("GH_OWNER") ?: ""}\"")
+        buildConfigField("String", "GITHUB_REPO", "\"${System.getenv("GH_REPO") ?: ""}\"")
+        buildConfigField("String", "GITHUB_TOKEN", "\"${System.getenv("GH_TOKEN") ?: ""}\"")
+        buildConfigField("String", "WORKFLOW_FILE", "\"${System.getenv("WORKFLOW_FILE") ?: "translate.yml"}\"")
     }
 
     buildTypes {
