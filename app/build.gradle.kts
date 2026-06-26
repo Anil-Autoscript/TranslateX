@@ -20,9 +20,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // GitHub config — replace with your values before building
-        buildConfigField("String", "GITHUB_OWNER", "\"Anil-Autoscript\"")
-        buildConfigField("String", "GITHUB_REPO", "\"TranslateX\"")
-        buildConfigField("String", "GITHUB_TOKEN", "\"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\"")
+        buildConfigField("String", "GITHUB_OWNER", "\"YOUR_GITHUB_USERNAME\"")
+        buildConfigField("String", "GITHUB_REPO", "\"YOUR_REPO_NAME\"")
+        buildConfigField("String", "GITHUB_TOKEN", "\"YOUR_GITHUB_PAT\"")
         buildConfigField("String", "WORKFLOW_FILE", "\"translate.yml\"")
     }
 
