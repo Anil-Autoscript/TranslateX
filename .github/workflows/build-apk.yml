@@ -26,13 +26,13 @@ jobs:
       - name: Grant Gradle execute permission
         run: chmod +x gradlew
 
-      # Inject secrets into local.properties so they never touch source code.
-      # Store these in GitHub → Settings → Secrets and variables → Actions.
+      # Inject secrets — matches secret names: GH_OWNER, GH_REPO, GH_TOKEN, WORKFLOW_FILE
       - name: Inject build config secrets
         run: |
-          sed -i 's|"YOUR_GITHUB_USERNAME"|"${{ secrets.TRANSLATEX_GITHUB_OWNER }}"|g' app/build.gradle.kts
-          sed -i 's|"YOUR_REPO_NAME"|"${{ secrets.TRANSLATEX_GITHUB_REPO }}"|g'        app/build.gradle.kts
-          sed -i 's|"YOUR_GITHUB_PAT"|"${{ secrets.TRANSLATEX_GITHUB_TOKEN }}"|g'      app/build.gradle.kts
+          sed -i 's|"YOUR_GITHUB_USERNAME"|"${{ secrets.GH_OWNER }}"|g'  app/build.gradle.kts
+          sed -i 's|"YOUR_REPO_NAME"|"${{ secrets.GH_REPO }}"|g'         app/build.gradle.kts
+          sed -i 's|"YOUR_GITHUB_PAT"|"${{ secrets.GH_TOKEN }}"|g'       app/build.gradle.kts
+          sed -i 's|"translate.yml"|"${{ secrets.WORKFLOW_FILE }}"|g'     app/build.gradle.kts
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
