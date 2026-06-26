@@ -21,8 +21,8 @@ android {
 
         // GitHub config — replace with your values before building
         buildConfigField("String", "GITHUB_OWNER", "\"Anil-Autoscript\"")
-        buildConfigField("String", "GITHUB_REPO", "\"Anil-Autoscript/TranslateX\"")
-        buildConfigField("String", "GITHUB_TOKEN", "\"YOUR_GITHUB_PAT\"")
+        buildConfigField("String", "GITHUB_REPO", "\"TranslateX\"")
+        buildConfigField("String", "GITHUB_TOKEN", "\"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\"")
         buildConfigField("String", "WORKFLOW_FILE", "\"translate.yml\"")
     }
 
