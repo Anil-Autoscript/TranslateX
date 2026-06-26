@@ -22,7 +22,7 @@ android {
         // GitHub config — replace with your values before building
         buildConfigField("String", "GITHUB_OWNER", "\"Anil-Autoscript\"")
         buildConfigField("String", "GITHUB_REPO", "\"TranslateX\"")
-        buildConfigField("String", "GITHUB_TOKEN", "\"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\"")
+        buildConfigField("String", "GITHUB_TOKEN", "\"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\"")
         buildConfigField("String", "WORKFLOW_FILE", "\"translate.yml\"")
     }
 
